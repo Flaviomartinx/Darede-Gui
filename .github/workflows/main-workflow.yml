@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  # Job 1: Build and Push Docker Image to ECR adfjlssgsgdsggsdggdalk
+  # Job 1: Build and Push Docker Image to ECR adfgggsgdsggsdggdalk
   build-and-push:
     runs-on: ubuntu-latest
 
@@ -55,7 +55,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: |
-          apt install nodejs npm
+          apt install -y nodejs npm
           npm install -g snyk
           snyk auth $SNYK_TOKEN
           snyk container test darede
