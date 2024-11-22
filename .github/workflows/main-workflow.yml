@@ -35,27 +35,27 @@ jobs:
         run: |
           docker push ${{ secrets.ECR_URI }}
 
-  # Job 2: Snyk Security Scan
-  security:
-    runs-on: ubuntu-latest
+ # Job 2: Snyk Security Scan kwec
+security:
+  runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
 
-      - name: Build Docker image
-        run: docker build -t my-app .
+    - name: Build Docker image
+      run: docker build -t darede .
 
-      - name: Snyk Docker Scan
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: |
-          curl -sL https://snyk.io/install | bash
-          snyk auth $SNYK_TOKEN
-          snyk container test my-app
+    - name: Snyk Docker Scan
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      run: |
+        curl -sL https://snyk.io/install | bash
+        snyk auth $SNYK_TOKEN
+        snyk container test darede
 
   # # Job 3: Terraform Apply
   # terraform:
