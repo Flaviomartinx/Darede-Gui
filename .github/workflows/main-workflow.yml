@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  # Job 1: Build and Push Docker Image to ECR
+  # Job 1: Build and Push Docker Image to ECR adfjlaj
   build-and-push:
     runs-on: ubuntu-latest
 
