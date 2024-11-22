@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  # Job 1: Build and Push Docker Image to ECR adfjlajafgsgslajfdalk
+  # Job 1: Build and Push Docker Image to ECR adfjlkhlgslajfdalk
   build-and-push:
     runs-on: ubuntu-latest
 
@@ -33,7 +33,7 @@ jobs:
 
       - name: Push Docker image to ECR
         run: |
-          docker push ${{ secrets.ECR_URI }}/darede:latest
+          docker push ${{ secrets.ECR_URI }}
 
   # # Job 2: Snyk Security Scan
   # security:
