@@ -55,7 +55,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: |
-          curl -sL https://snyk.io/install | bash
+          run: curl -sL https://static.snyk.io/snyk-installer.sh | bash
           snyk auth $SNYK_TOKEN
           snyk container test darede
 
