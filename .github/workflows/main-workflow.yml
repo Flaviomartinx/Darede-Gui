@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  # Job 1: Build and Push Docker Image to ECR adfjlssgseyyfyfyggdalk
+  # Job 1: Build and Push Docker Image to ECR adfjlssgsgdsggsdggdalk
   build-and-push:
     runs-on: ubuntu-latest
 
@@ -49,15 +49,17 @@ jobs:
       - name: Build Docker image  
         run: |
           cd Docker
-          docker build -t darede . 
+          docker build -t darede .
 
       - name: Snyk Docker Scan
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: |
-          run: curl -sL https://static.snyk.io/snyk-installer.sh | bash
+          apt install nodejs npm
+          npm install -g snyk
           snyk auth $SNYK_TOKEN
           snyk container test darede
+#         run: curl -sL https://static.snyk.io/snyk-installer.sh | bash
 
   # # Job 3: Terraform Apply
   # terraform:
