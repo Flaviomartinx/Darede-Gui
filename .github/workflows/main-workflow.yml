@@ -63,8 +63,9 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: |
-          curl -sL https://snyk.io/docs/install/ | bash
-          snyk auth $SNYK_TOKEN
+         curl -sL https://static.snyk.io/cli/latest/snyk-linux-x64.tar.gz | tar xz
+         sudo mv snyk /usr/local/bin
+         snyk auth $SNYK_TOKEN
 
       # 5. Executar o Snyk Scan
       - name: Snyk Docker Scan
