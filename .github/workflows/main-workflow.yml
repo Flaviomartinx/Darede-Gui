@@ -35,11 +35,11 @@ jobs:
         run: |
           docker push ${{ secrets.ECR_URI }}
 
- # Job 2: Snyk Security Scan
-security:
-  runs-on: ubuntu-latest
+# Job 2: Snyk Security Scan
+  security:
+    runs-on: ubuntu-latest
 
-  steps:
+    steps:
     # 1. Checkout do código
     - name: Checkout code
       uses: actions/checkout@v2
