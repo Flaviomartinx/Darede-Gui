@@ -36,41 +36,43 @@ jobs:
           docker push ${{ secrets.ECR_URI }}
 
  # Job 2: Snyk Security Scan
-  security:
-    runs-on: ubuntu-latest
+security:
+  runs-on: ubuntu-latest
 
-    steps:
-      # 1. Checkout do código
-      - name: Checkout code
-        uses: actions/checkout@v2
+  steps:
+    # 1. Checkout do código
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      # 2. Log in no Amazon ECR
-      - name: Log in to Amazon ECR
-        env:
-          AWS_REGION: us-east-1
-        run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.ECR_URI }}
+    # 2. Log in no Amazon ECR
+    - name: Log in to Amazon ECR
+      env:
+        AWS_REGION: us-east-1
+      run: |
+        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.ECR_URI }}
 
-      # 3. Pull da imagem do ECR
-      - name: Pull Docker image from ECR
-        run: |
-          docker pull ${{ secrets.ECR_URI }}
+    # 3. Pull da imagem do ECR
+    - name: Pull Docker image from ECR
+      run: |
+        docker pull ${{ secrets.ECR_URI }}
 
-      # 4. Instalação do Snyk CLI
-      - name: Install Snyk CLI
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: |
-         npm install -g snyk
-         snyk auth $SNYK_TOKEN
+    # 4. Instalação do Snyk CLI
+    - name: Install Snyk CLI
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      run: |
+        npm install -g snyk
+        snyk auth $SNYK_TOKEN
 
-         - name: Snyk Docker Scan
-         env:
-           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-         run: |
-           snyk container test ${{ secrets.ECR_URI }} || true
+    # 5. Executar o Snyk Scan
+    - name: Snyk Docker Scan
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      run: |
+        snyk container test ${{ secrets.ECR_URI }} || true
+      shell: bash
 
   # # Job 3: Terraform Apply
   # terraform:
