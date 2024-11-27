@@ -6,13 +6,21 @@ on:
       - main
 
 jobs:
-  # Job 1: Build and Push Docker Image to ECR adhkcbdfbvaalk
+  # Job 1: Build and Push Docker Image to ECR
   build-and-push:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Extract Branch and Commit Hash
+        id: git-info
+        run: |
+          BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          HASH=$(git rev-parse --short HEAD)
+          echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+          echo "HASH=$HASH" >> $GITHUB_ENV
 
       - name: Log in to Amazon ECR
         env:
@@ -27,52 +35,57 @@ jobs:
           cd Docker
           docker build -t darede .
 
-      - name: Docker Tag
+      - name: Docker Tag with Branch and Commit Hash
         run: |
-          docker tag darede:latest ${{ secrets.ECR_URI }}
+          docker tag darede:latest ${{ secrets.ECR_URI }}:${{ env.BRANCH }}-${{ env.HASH }}
+          docker tag darede:latest ${{ secrets.ECR_URI }}:latest
 
       - name: Push Docker image to ECR
         run: |
-          docker push ${{ secrets.ECR_URI }}
+          docker push ${{ secrets.ECR_URI }}:${{ env.BRANCH }}-${{ env.HASH }}
+          docker push ${{ secrets.ECR_URI }}:latest
 
-# Job 2: Snyk Security Scan
+  # Job 2: Snyk Security Scan
   security:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Checkout do código
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    # 2. Log in no Amazon ECR
-    - name: Log in to Amazon ECR
-      env:
-        AWS_REGION: us-east-1
-      run: |
-        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.ECR_URI }}
+      - name: Extract Branch and Commit Hash
+        id: git-info
+        run: |
+          BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          HASH=$(git rev-parse --short HEAD)
+          echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+          echo "HASH=$HASH" >> $GITHUB_ENV
 
-    # 3. Pull da imagem do ECR
-    - name: Pull Docker image from ECR
-      run: |
-        docker pull ${{ secrets.ECR_URI }}
+      - name: Log in to Amazon ECR
+        env:
+          AWS_REGION: us-east-1
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.ECR_URI }}
 
-    # 4. Instalação do Snyk CLI
-    - name: Install Snyk CLI
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      run: |
-        npm install -g snyk
-        snyk auth $SNYK_TOKEN
+      - name: Pull Docker image from ECR
+        run: |
+          docker pull ${{ secrets.ECR_URI }}:${{ env.BRANCH }}-${{ env.HASH }}
 
-    # 5. Executar o Snyk Scan
-    - name: Snyk Docker Scan
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      run: |
-        snyk container test ${{ secrets.ECR_URI }} || true
-      shell: bash
+      - name: Install Snyk CLI
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: |
+          npm install -g snyk
+          snyk auth $SNYK_TOKEN
+
+      - name: Snyk Docker Scan
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: |
+          snyk container test ${{ secrets.ECR_URI }}:${{ env.BRANCH }}-${{ env.HASH }} || true
+        shell: bash
 
   # Job 3: Terraform Apply
   terraform:
@@ -81,6 +94,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Extract Branch and Commit Hash
+        id: git-info
+        run: |
+          BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          HASH=$(git rev-parse --short HEAD)
+          echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+          echo "HASH=$HASH" >> $GITHUB_ENV
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
