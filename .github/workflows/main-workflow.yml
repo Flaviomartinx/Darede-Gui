@@ -45,7 +45,7 @@ jobs:
           docker push ${{ secrets.ECR_URI }}:${{ env.BRANCH }}-${{ env.HASH }}
           docker push ${{ secrets.ECR_URI }}:latest
 
-  # Job 2: Snyk Security Scan
+  # Job 2: Snyk Security Scan rgazfb
   security:
     runs-on: ubuntu-latest
 
