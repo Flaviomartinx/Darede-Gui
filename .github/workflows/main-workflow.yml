@@ -7,10 +7,12 @@ on:
 
 env:
   AWS_REGION: us-east-1
-#teste2
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.get-commit.outputs.hash }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -37,9 +39,8 @@ jobs:
           docker build -t $REPOSITORY_URI:$IMAGE_TAG .
           docker push $REPOSITORY_URI:$IMAGE_TAG
 
-
   security:
-    runs-on: ubuntu latest
+    runs-on: ubuntu-latest
     needs: build-and-push
     steps:
       - name: Checkout code
@@ -53,51 +54,18 @@ jobs:
 
       - name: Pull Docker image from ECR
         run: |
-          docker pull ${{ secrets.ECR_URI }}:${{ steps.git-info.outputs.BRANCH }}-${{ steps.git-info.outputs.HASH }}
+          docker pull ${{ secrets.ECR_URI }}:${{ needs.build-and-push.outputs.image_tag }}
 
-    # Job 2: Snyk Security Scandd
-  securiti:
-    runs-on: ubuntu-latest
+      - name: Install Snyk CLI
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: |
+          npm install -g snyk
+          snyk auth $SNYK_TOKEN
 
-    steps:
-    # 1. Checkout do código
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    # 2. Log in no Amazon ECR
-    - name: Log in to Amazon ECR
-      env:
-        AWS_REGION: ${{ secrets.AWS_REGION }}
-        IMAGE_TAG: ${{ steps.get-commit.outputs.hash }}
-      run: |
-        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.ECR_URI }}
-
-    # 3. Pull da imagem do ECR
-    - name: Pull Docker image from ECR
-      run: |
-        docker pull ${{ secrets.ECR_URI }}
-        IMAGE_TAG: ${{ steps.get-commit.outputs.hash }}
-    # 4. Instalação do Snyk CLI
-    - name: Install Snyk CLI
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      run: |
-        npm install -g snyk
-        snyk auth $SNYK_TOKEN
-
-    # 5. Executar o Snyk Scan
-    - name: Snyk Docker Scan
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      run: |
-        snyk container test ${{ secrets.ECR_URI }} || true
-      shell: bash
-  
-  apllication:
-    runs-on: ubuntu latest
-    needs: build-and-push
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Snyk Docker Scan
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: |
+          snyk container test ${{ secrets.ECR_URI }}:${{ needs.build-and-push.outputs.image_tag }} || true
+        shell: bash
