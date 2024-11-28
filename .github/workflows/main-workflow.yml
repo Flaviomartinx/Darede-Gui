@@ -55,7 +55,7 @@ jobs:
         run: |
           docker pull ${{ secrets.ECR_URI }}:${{ steps.git-info.outputs.BRANCH }}-${{ steps.git-info.outputs.HASH }}
 
-    # Job 2: Snyk Security Scan
+    # Job 2: Snyk Security Scandd
   securiti:
     runs-on: ubuntu-latest
 
