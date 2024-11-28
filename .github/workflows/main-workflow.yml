@@ -16,24 +16,27 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Log in to Amazon ECR
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.ECR_URI }}
 
-      - name: Set short git commit SHA
+      - name: Get short commit hash
         id: get-commit
-        run: |
-          calculatedSha=$(git rev-parse --short ${{ github.sha }})
-          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
+        run: echo "::set-output name=hash::$(git rev-parse --short=5 HEAD)"
 
       - name: Build and push Docker image
         env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
           IMAGE_TAG: ${{ steps.get-commit.outputs.hash }}
+          REPOSITORY_URI: ${{ secrets.ECR_URI }}
         run: |
           cd Docker
-          docker build -t $REPOSITORY_URI:${{ github.sha }} .
-          docker push $REPOSITORY_URI:${IMAGE_TAG}
+          docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+          docker push $REPOSITORY_URI:$IMAGE_TAG
+
 
   security:
     runs-on: ubuntu latest
