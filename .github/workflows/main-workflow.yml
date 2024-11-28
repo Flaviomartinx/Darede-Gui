@@ -29,7 +29,7 @@ jobs:
         env:
           IMAGE_TAG: ${{ steps.get-commit.outputs.hash }}
         run: |
-          REPOSITORY_URI=your-account-id.dkr.ecr.your-region.amazonaws.com/your-repo-name
+          cd Docker
           docker build -t $REPOSITORY_URI:${IMAGE_TAG} .
           docker push $REPOSITORY_URI:${IMAGE_TAG}
 
