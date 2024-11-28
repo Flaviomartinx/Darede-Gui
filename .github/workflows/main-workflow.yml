@@ -7,7 +7,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
-#teste
+#teste2
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -63,3 +63,10 @@ jobs:
       - name: Snyk Docker Scan
         run: |
           snyk container test ${{ secrets.ECR_URI }}:${{ steps.git-info.outputs.BRANCH }}-${{ steps.git-info.outputs.HASH }} || true
+  
+  apllication:
+    runs-on: ubuntu latest
+    needs: build-and-push
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
