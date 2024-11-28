@@ -21,16 +21,18 @@ jobs:
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.ECR_URI }}
 
-      - name: Get short commit hash
+      - name: Set short git commit SHA
         id: get-commit
-        run: echo "::set-output name=hash::$(git rev-parse --short=5 HEAD)"
+        run: |
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
 
       - name: Build and push Docker image
         env:
           IMAGE_TAG: ${{ steps.get-commit.outputs.hash }}
         run: |
           cd Docker
-          docker build -t $REPOSITORY_URI:${IMAGE_TAG} .
+          docker build -t $REPOSITORY_URI:${{ github.sha }} .
           docker push $REPOSITORY_URI:${IMAGE_TAG}
 
   security:
