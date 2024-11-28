@@ -11,41 +11,27 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    outputs:
-      BRANCH: ${{ steps.git-info.outputs.BRANCH }}
-      HASH: ${{ steps.git-info.outputs.HASH }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Extract Branch and Commit Hash
-        id: git-info
-        run: |
-          echo "BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
-          echo "HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-          echo "::set-output name=BRANCH::$(git rev-parse --abbrev-ref HEAD)"
-          echo "::set-output name=HASH::$(git rev-parse --short HEAD)"
-
       - name: Log in to Amazon ECR
         run: |
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure 'set' aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.ECR_URI }}
 
-      - name: Build Docker image
-        run: |
-          cd Docker
-          docker build -t darede .
+      - name: Get short commit hash
+        id: get-commit
+        run: echo "::set-output name=hash::$(git rev-parse --short=5 HEAD)"
 
-      - name: Docker Tag with Branch and Commit Hash
+      - name: Build and push Docker image
+        env:
+          IMAGE_TAG: ${{ steps.get-commit.outputs.hash }}
         run: |
-          docker tag darede:${{ steps.git-info.outputs.HASH }} ${{ secrets.ECR_URI }}:${{ steps.git-info.outputs.BRANCH }}-${{ steps.git-info.outputs.HASH }}
-          docker tag darede:${{ steps.git-info.outputs.HASH }} ${{ secrets.ECR_URI }}:${{ steps.git-info.outputs.HASH }}t
-
-      - name: Push Docker image to ECR
-        run: |
-          docker push ${{ secrets.ECR_URI }}:${{ steps.git-info.outputs.BRANCH }}-${{ steps.git-info.outputs.HASH }}
-          docker push ${{ secrets.ECR_URI }}:${{ steps.git-info.outputs.HASH }}
+          REPOSITORY_URI=your-account-id.dkr.ecr.your-region.amazonaws.com/your-repo-name
+          docker build -t $REPOSITORY_URI:${IMAGE_TAG} .
+          docker push $REPOSITORY_URI:${IMAGE_TAG}
 
   security:
     runs-on: ubuntu latest
