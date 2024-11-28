@@ -67,7 +67,8 @@ jobs:
     # 2. Log in no Amazon ECR
     - name: Log in to Amazon ECR
       env:
-        AWS_REGION: us-east-1
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+        IMAGE_TAG: ${{ steps.get-commit.outputs.hash }}
       run: |
         aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -77,7 +78,7 @@ jobs:
     - name: Pull Docker image from ECR
       run: |
         docker pull ${{ secrets.ECR_URI }}
-
+        IMAGE_TAG: ${{ steps.get-commit.outputs.hash }}
     # 4. Instalação do Snyk CLI
     - name: Install Snyk CLI
       env:
