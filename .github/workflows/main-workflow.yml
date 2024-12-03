@@ -57,50 +57,50 @@ jobs:
         run: |
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          
-      - name: Create ECS Task Definition Template
-        env:
-          ECS_TASK_ROLE: ${{ secrets.ECS_TASK_ROLE }}
-          ECS_EXECUTION_ROLE: ${{ secrets.ECS_EXECUTION_ROLE }}
-          IMAGE_URI: ${{ secrets.ECR_URI }}:${{ needs.build-and-push.outputs.image_tag }}
-        run: |
-          cat <<EOF > ecs-task-definition-template.json
-          {
-            "family": "my-app-task",
-            "containerDefinitions": [
-              {
-                "name": "library",
-                "image": "${IMAGE_URI}",
-                "memory": 512,
-                "cpu": 256,
-                "essential": true,
-                "portMappings": [
-                  {
-                    "containerPort": 80,
-                    "hostPort": 80,
-                    "protocol": "tcp"
-                  }
-                ],
-                "logConfiguration": {
-                  "logDriver": "awslogs",
-                  "options": {
-                    "awslogs-group": "/ecs/my-app",
-                    "awslogs-region": "us-east-1",
-                    "awslogs-stream-prefix": "ecs"
-                  }
-                }
-              }
-            ],
-            "networkMode": "awsvpc",
-            "requiresCompatibilities": [
-              "FARGATE"
-            ],
-            "cpu": "256",
-            "memory": "512",
-            "executionRoleArn": "${ECS_EXECUTION_ROLE}",
-            "taskRoleArn": "${ECS_TASK_ROLE}"
-          }
-          EOF
+
+      # - name: Create ECS Task Definition Template
+      #   env:
+      #     ECS_TASK_ROLE: ${{ secrets.ECS_TASK_ROLE }}
+      #     ECS_EXECUTION_ROLE: ${{ secrets.ECS_EXECUTION_ROLE }}
+      #     IMAGE_URI: ${{ secrets.ECR_URI }}:${{ needs.build-and-push.outputs.image_tag }}
+      #   run: |
+      #     cat <<EOF > ecs-task-definition-template.json
+      #     {
+      #       "family": "my-app-task",
+      #       "containerDefinitions": [
+      #         {
+      #           "name": "library",
+      #           "image": "${IMAGE_URI}",
+      #           "memory": 512,
+      #           "cpu": 256,
+      #           "essential": true,
+      #           "portMappings": [
+      #             {
+      #               "containerPort": 80,
+      #               "hostPort": 80,
+      #               "protocol": "tcp"
+      #             }
+      #           ],
+      #           "logConfiguration": {
+      #             "logDriver": "awslogs",
+      #             "options": {
+      #               "awslogs-group": "/ecs/my-app",
+      #               "awslogs-region": "us-east-1",
+      #               "awslogs-stream-prefix": "ecs"
+      #             }
+      #           }
+      #         }
+      #       ],
+      #       "networkMode": "awsvpc",
+      #       "requiresCompatibilities": [
+      #         "FARGATE"
+      #       ],
+      #       "cpu": "256",
+      #       "memory": "512",
+      #       "executionRoleArn": "${ECS_EXECUTION_ROLE}",
+      #       "taskRoleArn": "${ECS_TASK_ROLE}"
+      #     }
+      #     EOF
 
       # 2. Registrar nova Task Definition
       - name: Register Task Definition
