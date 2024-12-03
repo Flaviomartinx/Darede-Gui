@@ -72,7 +72,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: update-task-definition
     steps:
-      # Verificar estado do serviço no ECS
+      # Verificar estado do serviço no ECS wefw
       - name: Verify ECS Deployment
         env:
           AWS_REGION: ${{ env.AWS_REGION }}
