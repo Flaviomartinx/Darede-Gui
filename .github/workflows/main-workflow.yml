@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-and-push
     steps:
-      # 1. Checkout do código (opcional para acessar o JSON)
+      # 1. Checkout do código (opcional para acessar o JSON)f334f
       - name: Checkout code
         uses: actions/checkout@v2
 
