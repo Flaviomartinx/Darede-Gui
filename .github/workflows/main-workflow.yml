@@ -84,7 +84,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: update-task-definition
     steps:
-      # Verificar estado do serviço no ECScexs
+      # Verificar estado do serviço no ECScexsfwf
       - name: Verify ECS Deployment
         env:
           AWS_REGION: ${{ env.AWS_REGION }}
@@ -93,3 +93,6 @@ jobs:
         run: |
           aws ecs wait services-stable --cluster $ECS_CLUSTER --services $ECS_SERVICE
           echo "Deployment successful!"
+
+
+
