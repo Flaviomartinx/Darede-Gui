@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-and-push
     steps:
-      # 1. Checkout do código (opcional para acessar o JSON)f334f
+      # 1. Checkout do código (opcional para acessar o JSON)
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -70,7 +70,7 @@ jobs:
         run: |
           aws ecs register-task-definition --cli-input-json file://ecs-task-definition-template.json
 
-      # 4. Atualizar o serviço no ECSwdcw
+      # 4. Atualizar o serviço no ECS
       - name: Update ECS Service
         env:
           AWS_REGION: ${{ env.AWS_REGION }}
@@ -84,7 +84,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: update-task-definition
     steps:
-      # Verificar estado do serviço no ECScda
+      # Verificar estado do serviço no ECS
       - name: Verify ECS Deployment
         env:
           AWS_REGION: ${{ env.AWS_REGION }}
