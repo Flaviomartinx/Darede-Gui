@@ -70,7 +70,7 @@ jobs:
         run: |
           aws ecs register-task-definition --cli-input-json file://ecs-task-definition-template.json
 
-      # 4. Atualizar o serviço no ECS
+      # 4. Atualizar o serviço no ECSwdcw
       - name: Update ECS Service
         env:
           AWS_REGION: ${{ env.AWS_REGION }}
