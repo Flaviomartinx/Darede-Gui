@@ -57,6 +57,7 @@ jobs:
       # 2. Substituir placeholders no JSON
       - name: Update Task Definition JSON
         run: |
+          ls
           sed -i "s|ECR_URI|${{ secrets.ECR_URI }}|g" ecs-task-definition-template.json
           sed -i "s|IMAGE_TAG|${{ needs.build-and-push.outputs.image_tag }}|g" ecs-task-definition-template.json
           sed -i "s|ECS_EXECUTION_ROLE_ARN|${{ secrets.ECS_EXECUTION_ROLE_ARN }}|g" ecs-task-definition-template.json
