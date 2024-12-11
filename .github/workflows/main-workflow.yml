@@ -60,7 +60,7 @@ jobs:
           echo "Verifying ecs-task-definition-template.json..."
           ls -l ecs-task-definition-template.json
 
-      # 3. Substituir placeholders no JSON
+      # 3. Substituir placeholders no JSONsacsa
       - name: Update Task Definition JSON
         run: |
           sed -i "s|ECR_URI|${{ secrets.ECR_URI }}|g" ecs-task-definition-template.json
