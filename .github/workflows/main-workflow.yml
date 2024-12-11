@@ -73,9 +73,9 @@ jobs:
         env:
           AWS_REGION: ${{ env.AWS_REGION }}
         run: |
-          aws ecs register-task-definition-template --cli-input-json file://ecs-task-definition-template.json --debug
+          aws ecs register-task-definition --cli-input-json file://ecs-task-definition-template.json --debug
 
-      # 5. Atualizar o serviço no ECS
+      # 5. Atualizar o serviço no ECSeq
       - name: Update ECS Service
         env:
           AWS_REGION: ${{ env.AWS_REGION }}
