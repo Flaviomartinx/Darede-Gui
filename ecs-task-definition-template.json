@@ -1,8 +1,8 @@
 {
-  "family": "my-app-task",
+  "family": "service_app",
   "containerDefinitions": [
     {
-      "name": "my-app-container",
+      "name": "ProdCluster",
       "image": "ECR_URI:IMAGE_TAG",
       "memory": 512,
       "cpu": 256,
@@ -17,7 +17,7 @@
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/my-app",
+          "awslogs-group": "/ecs/service_app",
           "awslogs-region": "us-east-1",
           "awslogs-stream-prefix": "ecs"
         }
