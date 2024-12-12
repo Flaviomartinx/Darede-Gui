@@ -2,7 +2,7 @@
   "family": "service_app",
   "containerDefinitions": [
     {
-      "name": "task_app:24",
+      "name": "service_app:23",
       "image": "ECR_URI:NEW_IMAGE_TAG",
       "memory": 512,
       "cpu": 256,
