@@ -2,8 +2,8 @@
   "family": "service_app",
   "containerDefinitions": [
     {
-      "name": "service_app:23",
-      "image": "${{ secrets.ECR_URI }}:${{ needs.build-and-push.outputs.image_tag }}",
+      "name": "task_app:24",
+      "image": "ECR_URI:NEW_IMAGE_TAG",
       "memory": 512,
       "cpu": 256,
       "essential": true,
@@ -17,37 +17,35 @@
       "environment": [
         {
           "name": "DB_NAME",
-          "value": "${{ secrets.DB_NAME }}"
+          "value": "library"
         },
         {
           "name": "DB_HOST",
-          "value": "${{ secrets.DB_HOST }}"
+          "value": "new-db-hostname"
         },
         {
           "name": "DB_USER",
-          "value": "${{ secrets.DB_USER }}"
+          "value": "new-username"
         },
         {
           "name": "DB_PASSWORD",
-          "value": "${{ secrets.DB_PASSWORD }}"
+          "value": "new-password"
         }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "/ecs/tasks-logs",
-          "awslogs-region": "${{ env.AWS_REGION }}",
+          "awslogs-region": "us-east-1",
           "awslogs-stream-prefix": "ecs"
         }
       }
     }
   ],
   "networkMode": "awsvpc",
-  "requiresCompatibilities": [
-    "FARGATE"
-  ],
+  "requiresCompatibilities": ["FARGATE"],
   "cpu": "256",
   "memory": "512",
-  "executionRoleArn": "${{ secrets.ECS_EXECUTION_ROLE_ARN }}",
-  "taskRoleArn": "${{ secrets.ECS_TASK_ROLE_ARN }}"
+  "executionRoleArn": "ECS_EXECUTION_ROLE_ARN",
+  "taskRoleArn": "ECS_TASK_ROLE_ARN"
 }
