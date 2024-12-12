@@ -17,19 +17,19 @@
       "environment": [
         {
           "name": "DB_NAME",
-          "value": "library"
+          "value": "${{ secrets.DB_NAME }}"
         },
         {
           "name": "DB_HOST",
-          "value": "new-db-hostname"
+          "value": "${{ secrets.DB_HOST }}"
         },
         {
           "name": "DB_USER",
-          "value": "new-username"
+          "value": "${{ secrets.DB_USER }}"
         },
         {
           "name": "DB_PASSWORD",
-          "value": "new-password"
+          "value": "${{ secrets.DB_PASSWORD }}"
         }
       ],
       "logConfiguration": {
