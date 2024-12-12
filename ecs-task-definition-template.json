@@ -2,7 +2,7 @@
   "family": "service_app",
   "containerDefinitions": [
     {
-      "name": "task_app",
+      "name": "service_app:23",
       "image": "${{ secrets.ECR_URI }}:${{ needs.build-and-push.outputs.image_tag }}",
       "memory": 512,
       "cpu": 256,
