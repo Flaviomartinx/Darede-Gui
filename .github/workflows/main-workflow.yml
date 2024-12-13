@@ -78,7 +78,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ env.AWS_REGION }}
         run: |
-          aws ecs register-task-definition --cli-input-json file://ecs-task-definition-template.json
+          aws ecs register-task-definition --cli-input-json file://ecs-task-definition-template.json --debug
 
       # 5. Atualizar o serviço no ECS
       - name: Update ECS Service
