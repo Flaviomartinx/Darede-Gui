@@ -3,7 +3,7 @@
   "containerDefinitions": [
     {
       "name": "service_app",
-      "image": "${{ secrets.ECR_URI }}:${{ needs.build-and-push.outputs.image_tag }}",
+      "image": "ECR_URI:NEW_IMAGE_TAG",
       "memory": 512,
       "cpu": 256,
       "essential": true,
@@ -17,19 +17,19 @@
       "environment": [
         {
           "name": "DB_NAME",
-          "value": "${{ secrets.DB_NAME }}"
+          "value": "DB_NAME"
         },
         {
           "name": "DB_HOST",
-          "value": "${{ secrets.DB_HOST }}"
+          "value": "DB_HOST"
         },
         {
           "name": "DB_USER",
-          "value": "${{ secrets.DB_USER }}"
+          "value": "DB_USER"
         },
         {
           "name": "DB_PASSWORD",
-          "value": "${{ secrets.DB_PASSWORD }}"
+          "value": "DB_PASSWORD"
         }
       ],
       "logConfiguration": {
@@ -46,6 +46,6 @@
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "256",
   "memory": "512",
-  "executionRoleArn": "${{ secrets.ECS_EXECUTION_ROLE_ARN }}",
-  "taskRoleArn": "${{ secrets.ECS_TASK_ROLE_ARN }}"
+  "executionRoleArn": "ECS_EXECUTION_ROLE_ARN",
+  "taskRoleArn": "ECS_TASK_ROLE_ARN"
 }
