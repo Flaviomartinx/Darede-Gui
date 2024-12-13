@@ -89,7 +89,7 @@ jobs:
           ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
           ECS_SERVICE: ${{ secrets.ECS_SERVICE }}
         run: |
-          NEW_TASK_DEF_ARN=$(aws ecs describe-task-definition --task-definition service_app:23 --query "taskDefinition.taskDefinitionArn" --output text)
+          NEW_TASK_DEF_ARN=$(aws ecs describe-task-definition --task-definition task_app:2 --query "taskDefinition.taskDefinitionArn" --output text)
           echo "New Task Definition ARN: $NEW_TASK_DEF_ARN"
           aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --task-definition $NEW_TASK_DEF_ARN --debug
 
