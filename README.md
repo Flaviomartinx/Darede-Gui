@@ -104,7 +104,7 @@ URL: [https://registry.terraform.io](https://registry.terraform.io)
 ## Conclusão
 O uso de módulos no Terraform é uma estratégia poderosa para organizar, reutilizar e manter o código de infraestrutura. Adotar essa abordagem não apenas melhora a produtividade, mas também garante consistência e qualidade em ambientes complexos. Com boas práticas e organização, é possível escalar a infraestrutura de maneira eficiente e segura.
 
-## Módulos utilizados na Kaua Sleep
+## Módulos utilizados 
 
 ### 1. **Compute**
 - **Utilização**: Responsável por prover capacidade computacional na nuvem. Isso inclui servidores virtuais (instâncias EC2, por exemplo) onde a aplicação pode ser executada.
