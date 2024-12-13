@@ -1,14 +1,15 @@
 
 ---
 
-### Documentação de Integração do GitHub Actions com ECS
+### **Documentação de Integração do GitHub Actions com ECS**
 
-#### **Introdução**
+#### **1. Introdução**
 Este documento fornece uma visão geral detalhada sobre como configurar e executar um fluxo de trabalho do GitHub Actions para realizar build, push de imagem Docker para o Docker Hub, e deploy em uma definição de tarefa no ECS (Elastic Container Service) da AWS.
 
-#### **1. Workflow GitHub Actions**
+#### **2. Workflow GitHub Actions**
 - **Objetivo**: Automatizar o build, teste e deploy de uma aplicação Docker em um ambiente de produção usando GitHub Actions.
 - **Estrutura do Workflow**:
+
   ```yaml
   name: CI/CD Pipeline
 
@@ -67,9 +68,10 @@ Este documento fornece uma visão geral detalhada sobre como configurar e execut
   2. **Inicie o Workflow**:
      - Sempre que você fizer um push para a branch `main`, o workflow será executado. Ele fará o build da imagem Docker, a enviará para o Docker Hub e, por fim, atualizará o serviço ECS com a nova imagem.
 
-#### **2. ECS Describe-Task-Definition**
+#### **3. ECS Describe-Task-Definition**
 - **Objetivo**: Configurar uma definição de tarefa no ECS para que a aplicação Docker seja executada em um cluster ECS.
 - **Exemplo de Task Definition**:
+
   ```json
   {
     "family": "my-task-family",
@@ -117,19 +119,22 @@ Este documento fornece uma visão geral detalhada sobre como configurar e execut
     - `essential`: Booleano que define se o container é essencial para o funcionamento da tarefa.
     - `environment`: Variáveis de ambiente que o container precisa para funcionar corretamente.
 
-#### **3. Integração Workflow com ECS**
-- **Quando você faz um push na branch `main`**:
-  1. **O workflow é acionado**.
-  2. **O Docker Hub**:
-     - Faz o build da imagem Docker.
-     - Realiza o push para o Docker Hub com o comando `docker build -t $DOCKER_USER/repository:latest .` e `docker push $DOCKER_USER/repository:latest`.
-  3. **AWS CLI**:
-     - Configura o AWS CLI com as credenciais e a região (`AWS_ACCESS_KEY_ID` e `AWS_SECRET_ACCESS_KEY`).
-     - Executa `aws ecs update-service --cluster my-cluster --service my-service --force-new-deployment` para forçar uma nova implantação do serviço ECS com a nova imagem.
+#### **4. Integração Workflow com ECS**
+- **Como funciona o processo**:
+  1. **Quando você faz um push na branch `main`**:
+     - O workflow é acionado automaticamente.
+     - **Etapa Build**:
+       - O GitHub Actions configura o ambiente, define as variáveis secretas (`DOCKER_USER`, `DOCKER_PASSWORD`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`) necessárias para autenticar e interagir com o Docker Hub e AWS.
+       - A imagem Docker é construída e enviada para o Docker Hub com os comandos:
+         ```bash
+         docker build -t $DOCKER_USER/repository:latest .
+         docker push $DOCKER_USER/repository:latest
+         ```
+     - **Etapa Deploy**:
+       - A AWS CLI é configurada com as credenciais e região do usuário para acessar e interagir com o ECS.
+       - O comando `aws ecs update-service --cluster my-cluster --service my-service --force-new-deployment` é executado para forçar uma nova implantação do serviço ECS com a nova imagem Docker.
 
----
-
-### **Conclusão**
+#### **5. Conclusão**
 Este documento forneceu uma visão abrangente de como você pode configurar um fluxo de trabalho do GitHub Actions para automatizar o build, teste e deploy de uma aplicação Docker em um cluster ECS da AWS. A integração eficaz entre o GitHub Actions e o ECS permite uma entrega contínua rápida e segura de software, promovendo eficiência e minimizando a possibilidade de erros humanos.
 
 Certifique-se de ajustar as configurações e o fluxo de trabalho conforme as necessidades específicas da sua aplicação e infraestrutura AWS.
